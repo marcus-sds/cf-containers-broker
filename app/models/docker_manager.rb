@@ -12,7 +12,8 @@ class DockerManager < ContainerManager
 
   attr_reader :host_port_allocator, :plan_id, :image, :tag, :command, :entrypoint, :restart, :workdir,
               :environment, :expose_ports, :persistent_volumes, :user, :memory, :memory_swap,
-              :cpu_shares, :privileged, :cap_adds, :cap_drops
+              :cpu_shares, :privileged, :cap_adds, :cap_drops,
+              :storage_opt_size
 
   def initialize(attrs)
     super
@@ -37,6 +38,7 @@ class DockerManager < ContainerManager
     @privileged = attrs.fetch('privileged', false)
     @cap_adds = attrs.fetch('cap_adds', []) || []
     @cap_drops = attrs.fetch('cap_drops', []) || []
+    @storage_opt_size = attrs.fetch('storage_opt_size', '5G') || '5G'
   end
 
   def find(guid)
@@ -313,6 +315,7 @@ class DockerManager < ContainerManager
         'CpuShares' => cpu_shares,
         'PublishAllPorts' => false,
         'Privileged' => privileged,
+        'StorageOpt' => {'size' => storage_opt_size},
       },
     }
   end
